@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "rolesdemo.run-seeder",
+      "type": "java.lang.Boolean",
+      "description": "Should the seeder be run (default: false)",
+      "defaultValue": false
+  }
+] }

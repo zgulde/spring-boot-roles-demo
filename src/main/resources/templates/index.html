@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+</head>
+<body>
+
+<h1>Home Page!</h1>
+
+<div sec:authorize="isAuthenticated()">
+    You are logged in.
+    <p th:text="'Username: ' + ${#authentication.principal.username}" />
+    <p th:text="'Email: ' + ${#authentication.principal.email}" />
+
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Logout">
+    </form>
+
+    <p sec:authorize="hasRole('ROLE_INSTRUCTOR')">You are an instructor.</p>
+    <p sec:authorize="hasRole('ROLE_STUDENT')">You are a student.</p>
+
+</div>
+<p sec:authorize="not isAuthenticated()">You are not logged in.</p>
+
+</body>
+</html>
