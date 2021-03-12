@@ -2,31 +2,33 @@
 
 ## Creating Roles
 
-- convention is all cals -- `ROLE_USER`, `ROLE_ADMIN`
-- prefix all with `ROLE_` (assumption of spring security)
+- prefix all with `ROLE_` (assumption of spring security methods)
+  
+- convention is all caps -- `ROLE_USER`, `ROLE_ADMIN`
+  
 - `getGrantedAuthorities` method is the key
 
-```java
-import org.springframework.security.core.authority.AuthorityUtils;
+    ```java
+    import org.springframework.security.core.authority.AuthorityUtils;
 
-...
+    ...
 
-new SimpleGrantedAuthority("ROLE_WHATEVER");
-AuthorityUtils.createAuthorityList("ROLE_ONE", "ROLE_TWO");
-AuthorityUtils.NO_AUTHORITIES;
-```
+    new SimpleGrantedAuthority("ROLE_WHATEVER");
+    AuthorityUtils.createAuthorityList("ROLE_ONE", "ROLE_TWO");
+    AuthorityUtils.NO_AUTHORITIES;
+    ```
 
-E.g. if you have a single `String role` property on your user:
+    E.g. if you have a single `String role` property on your user:
 
-```java
-AuthorityUtils.createAuthorityList(this.role)
-```
+    ```java
+    AuthorityUtils.createAuthorityList(this.role)
+    ```
 
-Or if a user has many `Role`s:
+    Or if a user has many `Role`s:
 
-```java
-this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getName()))
-```
+    ```java
+    this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getName()))
+    ```
 
 ## Securing Endpoints
 
@@ -39,63 +41,58 @@ this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getName()))
 
 1. `@Secured` on a controller method or class to restrict access based on roles
 
-```java
-@Controller
-@Secured({"ROLE_ADMIN", "ROLE_SUPERUSER"})
-class MyController {
-    // any methods inside of here will only be accessible by admins or superusers
-}
-```
-
-```java
-import org.springframework.web.bind.annotation.GetMapping;
-
-@Controller
-class MyController {
-    @GetMapping("/public")
-    public String publicRoute() {
-        // anyone can visit this url
-    }
-    
-    @GetMapping("/secret")
+    ```java
+    @Controller
     @Secured({"ROLE_ADMIN", "ROLE_SUPERUSER"})
-    public String secret() {
-        // only admins and superusers can visit this url
+    class MyController {
+        // any methods inside of here will only be accessible by admins or superusers
     }
-}
-```
+    ```
+
+    ```java
+    import org.springframework.web.bind.annotation.GetMapping;
+
+    @Controller
+    class MyController {
+        @GetMapping("/public")
+        public String publicRoute() {
+            // anyone can visit this url
+        }
+        
+        @GetMapping("/secret")
+        @Secured({"ROLE_ADMIN", "ROLE_SUPERUSER"})
+        public String secret() {
+            // only admins and superusers can visit this url
+        }
+    }
+    ```
 
 1. `@PreAuthorize` on a controller method or class to restrict access based on custom expressions
 
-```java
-import org.springframework.security.access.prepost.PreAuthorize;
-
-@Controller
-@PreAuthorize("isAuthenticated()")
-class MyController {
-    // only logged in users can visit endpoints defined here
-}
-```
-
-```java
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-
-@Controller
-class MyController {
-    @GetMapping("/public")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String publicRoute() {
-        // only admins can visit here
+    ```java
+    @Controller
+    @PreAuthorize("isAuthenticated()")
+    class MyController {
+        // only logged in users can visit endpoints defined here
     }
+    ```
 
-    @GetMapping("/secret")
-    @PreAuthorize("principal.username == 'grace_hopper'")
-    public String secret() {
-        // only the user with username "grace_hopper" can visit this route
+    ```java
+    @Controller
+    class MyController {
+        @GetMapping("/public")
+        @PreAuthorize("hasRole('ADMIN')")
+        public String publicRoute() {
+            // only admins can visit here
+        }
+
+        @GetMapping("/secret")
+        @PreAuthorize("principal.username == 'grace_hopper'")
+        public String secret() {
+            // only the user with username "grace_hopper" can visit this route
+        }
     }
-}
-```
+    ```
 
 ## Other
 
