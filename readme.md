@@ -97,8 +97,23 @@ class MyController {
 }
 ```
 
-
 ## Other
 
 - In views
+  
+    ```html
+    <p>Welcome, <span th:text="${#authoization.principal.username}" />!</p>
+    ```
+
 - Inject logged in user (caveats of using this class w/ hibernate!)
+
+    As an alternative to the `SecurityContextHolder` and casting dance.
+
+    ```java
+    @GetMapping("/somewhere")
+    public String aControllerMethod(@AuthorizationPrincipal UserWithRoles loggedInUser) {
+        // Do something with the logged in user
+    }
+    ```
+  
+    NB. can also inject `Authorization auth` or `Principal principal`
