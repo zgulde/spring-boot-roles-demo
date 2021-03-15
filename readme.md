@@ -114,3 +114,18 @@
     ```
   
     NB. can also inject `Authorization auth` or `Principal principal`
+
+- Checking roles programmatically
+
+    ```java
+    @GetMapping("/somewhere")
+    public String example(HttpServletRequest request) {
+        // note the lack of the ROLE_ prefix
+        if (request.isUserInRole("ADMIN")) {
+            // user is an admin
+        } else {
+            // user is not an admin
+        }
+        // ... 
+    }
+    ```
